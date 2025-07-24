@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Online Research Study</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom styles for the Inter font and base layout */
+        body {
+            font-family: 'Inter', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #f3f4f6; /* Neutral background for the very outside */
+        }
+
+        /* Base card styling (default neutral theme) */
+        .card {
+            background-color: #ffffff;
+            color: #1f2937; /* A dark gray for default text */
+            border-radius: 1rem; /* rounded-xl */
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); /* shadow-xl */
+            padding: 2rem;
+            max-width: 90%;
+            width: 700px; /* Max width for content */
+            text-align: center;
+            display: none; /* Hidden by default, shown by JS */
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 500px; /* Ensure cards have a minimum height */
+        }
+
+        /* Specific color themes - applied by JS to the .card element for experimental screens */
+        .warm-theme {
+            background-color: #FFF7ED; /* orange-100 */
+            color: #7C2D12; /* orange-900 */
+        }
+        .warm-theme .btn-primary {
+            background-color: #EF4444; /* red-500 */
+            color: white;
+        }
+        .warm-theme .btn-primary:hover {
+            background-color: #DC2626; /* red-600 */
+        }
+        .warm-theme .text-secondary {
+            color: #C2410C; /* orange-700 */
+        }
+
+        .cool-theme {
+            background-color: #7f9591; /* green-100 */
+            color: #1E3A8A; /* blue-900 */
+        }
+        .cool-theme .btn-primary {
+            background-color: #87a4ba; /* blue-500 */
+            color: white;
+        }
+        .cool-theme .btn-primary:hover {
+            background-color: #002853; /* blue-600 */
+        }
+        .cool-theme .text-secondary {
+            color: #002853; /* blue-700 */
+        }
+
+        /* Ensure image responsiveness */
+        .item-image {
+            max-width: 100%;
+            height: auto;
+            border-radius: 0.5rem; /* rounded-lg */
+            margin-bottom: 1rem;
+        }
+
+        /* Specific button styling for wishlist */
+        .wishlist-btn {
+            background-color: #6B7280; /* gray-500 */
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: background-color 0.2s ease-in-out;
+            margin-top: 1rem;
+            font-weight: 600;
+        }
+        .wishlist-btn:hover:not(:disabled) {
+            background-color: #4B5563; /* gray-600 */
+        }
+        .wishlist-btn:disabled {
+            background-color: #D1D5DB; /* gray-300 */
+            cursor: not-allowed;
+        }
+        .wishlist-btn.clicked {
+            background-color: #10B981; /* green-500 */
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Consent Screen -->
+    <div id="consent-screen" class="card">
+        <h1 class="text-3xl font-bold mb-4">Study Information and Consent Form</h1>
+        <p class="mb-2 text-lg">**Study Title:** User Interaction with Online Interface Designs</p>
+        <p class="mb-2 text-lg">**Researcher:** Melissa Tovar</p>
+        <p class="mb-6 text-lg">**University:** Arizona State University]</p>
+
+        <h2 class="text-2xl font-semibold mb-3 text-secondary">Introduction:</h2>
+        <p class="mb-4 text-base leading-relaxed">You are invited to participate in a research study investigating how individuals interact with different online interface designs. Your participation in this study is entirely voluntary.</p>
+
+        <h2 class="text-2xl font-semibold mb-3 text-secondary">Purpose of the Study:</h2>
+        <p class="mb-4 text-base leading-relaxed">The purpose of this study is to understand how various visual elements in online interfaces may influence user behavior and efficiency during simple tasks.</p>
+
+        <h2 class="text-2xl font-semibold mb-3 text-secondary">What You Will Do:</h2>
+        <p class="mb-4 text-base leading-relaxed">If you agree to participate, you will be asked to complete a brief online task involving browsing a mock online catalog. This task will involve navigating through a few pages and making hypothetical selections. The entire study is expected to take approximately 5-10 minutes to complete.</p>
+
+        <h2 class="text-2xl font-semibold mb-3 text-secondary">Risks and Benefits:</h2>
+        <p class="mb-4 text-base leading-relaxed">There are no foreseeable risks associated with participating in this study beyond those encountered in daily online browsing. Your participation is considered minimal risk. There are no direct personal benefits to you for participating, but your contribution will help researchers better understand principles of online interface design.</p>
+
+        <h2 class="text-2xl font-semibold mb-3 text-secondary">Confidentiality:</h2>
+        <p class="mb-4 text-base leading-relaxed">Your responses will be completely anonymous. No personally identifiable information will be collected. The data collected will be used for research purposes only and will be analyzed in aggregate. Your individual responses cannot be linked back to you.</p>
+
+        <h2 class="text-2xl font-semibold mb-3 text-secondary">Voluntary Participation:</h2>
+        <p class="mb-6 text-base leading-relaxed">Your decision to participate in this study is completely voluntary. You are free to withdraw at any time without penalty or loss of benefits to which you are otherwise entitled. You may also skip any questions you do not wish to answer.</p>
+
+        <h2 class="text-2xl font-semibold mb-3 text-secondary">Contact Information:</h2>
+        <p class="mb-8 text-base leading-relaxed">If you have any questions about this research, you may contact Melissa Tovar at matovar3@asu.edu.</p>
+
+        <button id="agree-button" class="btn-primary px-8 py-3 text-xl font-semibold rounded-lg shadow-md hover:shadow-lg transition-all duration-200">I agree to participate</button>
+    </div>
+
+        <div class="form-group">
+            <label>Gender:</label>
+            <div class="radio-option">
+                <input type="radio" id="gender-male" name="gender" value="Male">
+                <label for="gender-male">Male</label>
+            </div>
+            <div class="radio-option">
+                <input type="radio" id="gender-female" name="gender" value="Female">
+                <label for="gender-female">Female</label>
+            </div>
+            <div class="radio-option">
+                <input type="radio" id="gender-nonbinary" name="gender" value="Non-binary">
+                <label for="gender-nonbinary">Non-binary</label>
+            </div>
+            <div class="radio-option">
+                <input type="radio" id="gender-prefer-not-say" name="gender" value="Prefer not to say">
+                <label for="gender-prefer-not-say">Prefer not to say</label>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>How often do you use online shopping or browsing websites?</label>
+            <div class="radio-option">
+                <input type="radio" id="freq-daily" name="online-freq" value="Daily">
+                <label for="freq-daily">Daily</label>
+            </div>
+            <div class="radio-option">
+                <input type="radio" id="freq-several-week" name="online-freq" value="Several times a week">
+                <label for="freq-several-week">Several times a week</label>
+            </div>
+            <div class="radio-option">
+                <input type="radio" id="freq-once-week" name="online-freq" value="About once a week">
+                <label for="freq-once-week">About once a week</label>
+            </div>
+            <div class="radio-option">
+                <input type="radio" id="freq-few-month" name="online-freq" value="A few times a month">
+                <label for="freq-few-month">A few times a month</label>
+            </div>
+            <div class="radio-option">
+                <input type="radio" id="freq-less-month" name="online-freq" value="Less than once a month">
+                <label for="freq-less-month">Less than once a month</label>
+            </div>
+            <div class="radio-option">
+                <input type="radio" id="freq-never" name="online-freq" value="Never">
+                <label for="freq-never">Never</label>
+            </div>
+        </div>
+
+        <button id="demographics-submit-button" class="btn-primary px-8 py-3 text-xl font-semibold rounded-lg shadow-md hover:shadow-lg transition-all duration-200 mt-6">Continue</button>
+    </div>
+    <!-- Instructions Screen -->
+    <div id="instructions-screen" class="card">
+        <h1 class="text-3xl font-bold mb-4">Instructions for Your Task</h1>
+        <p class="mb-6 text-lg leading-relaxed">Thank you for agreeing to participate in our study!</p>
+
+        <p class="mb-4 text-base leading-relaxed">In this section, you will be presented with a simplified, mock online catalog. Your task is to browse a selection of **five** generic household items.</p>
+
+        <p class="mb-4 text-base leading-relaxed">For each item, you will see its image and a brief description. Below each item, you will find a button labeled "**Add to Wishlist**."</p>
+
+        <h2 class="text-2xl font-semibold mb-3 text-secondary">Your Goal:</h2>
+        <ul class="list-disc list-inside text-left mb-6 text-base leading-relaxed">
+            <li>Please review each item at your own pace.</li>
+            <li>If you would hypothetically consider adding an item to a personal wishlist (even if you're only vaguely interested or think it might be useful), please click the "**Add to Wishlist**" button for that item.</li>
+            <li>After reviewing an item and making your selection (or choosing not to), click the "**Next Item**" button to proceed.</li>
+            <li>You will not be making any actual purchases, and no real money is involved. This is purely a simulated browsing experience.</li>
+        </ul>
+
+        <p class="mb-8 text-base leading-relaxed">We will be measuring the time it takes you to complete the task and the items you choose to add to your wishlist. Please proceed naturally.</p>
+
+        <button id="start-task-button" class="btn-primary px-8 py-3 text-xl font-semibold rounded-lg shadow-md hover:shadow-lg transition-all duration-200">Start Task</button>
+    </div>
+
+    <!-- Item Browsing Screens (Dynamically generated or structured) -->
+    <div id="item-screen" class="card">
+        <h2 id="item-name" class="text-2xl font-bold mb-4"></h2>
+        <img id="item-image" src="" alt="Item Image" class="item-image">
+        <p id="item-description" class="mb-6 text-base leading-relaxed"></p>
+        <button id="add-to-wishlist-button" class="wishlist-btn font-semibold px-6 py-2 rounded-lg transition-all duration-200">Add to Wishlist</button>
+        <button id="next-item-button" class="btn-primary px-6 py-2 rounded-lg shadow-md hover:shadow-lg transition-all duration-200 mt-4">Next Item</button>
+    </div>
+
+    <!-- Debriefing Screen -->
+    <div id="debriefing-screen" class="card">
+        <h1 class="text-3xl font-bold mb-4">Study Complete!</h1>
+        <p class="mb-6 text-lg leading-relaxed">Thank you for participating in our study. Your responses are valuable to our research.</p>
+
+        <h2 class="text-2xl font-semibold mb-3 text-secondary">Study Purpose:</h2>
+        <p class="mb-4 text-base leading-relaxed">The purpose of this study was to investigate how different interface color schemes (warm vs. cool) might implicitly influence user engagement and task efficiency in an online browsing environment. We randomly assigned you to an interface with either a warm or cool color palette without your explicit knowledge. We then measured the time it took you to complete the browsing task and how many items you hypothetically added to your wishlist, as subtle indicators of your interaction and engagement with the interface.</p>
+
+        <h2 class="text-2xl font-semibold mb-3 text-secondary">Your Data:</h2>
+        <div class="bg-gray-100 p-4 rounded-lg text-left text-gray-800 break-words mb-6">
+            <p><strong>Assigned Condition:</strong> <span id="final-condition"></span></p>
+            <p><strong>Task Completion Time:</strong> <span id="final-time"></span> seconds</p>
+            <p><strong>Items Added to Wishlist:</strong> <span id="final-wishlist-count"></span> / 5</p>
+            <p><strong>Unique Participant ID:</strong> <span id="final-participant-id"></span></p>
+        </div>
+        <p class="mb-8 text-base leading-relaxed font-semibold">Please copy the "Your Data" section above and provide it to your researcher as instructed.</p>
+
+        <p class="text-base leading-relaxed">If you have any questions, please contact [Your Name/Professor's Name] at [Your Email/Professor's Email].</p>
+    </div>
+
+    <script>
+        // --- Global Variables ---
+        const consentScreen = document.getElementById('consent-screen');
+        const instructionsScreen = document.getElementById('instructions-screen');
+        const itemScreen = document.getElementById('item-screen');
+        const debriefingScreen = document.getElementById('debriefing-screen');
+
+        const agreeButton = document.getElementById('agree-button');
+        const startTaskButton = document.getElementById('start-task-button');
+        const addToWishlistButton = document.getElementById('add-to-wishlist-button');
+        const nextItemButton = document.getElementById('next-item-button');
+
+        const itemName = document.getElementById('item-name');
+        const itemImage = document.getElementById('item-image');
+        const itemDescription = document.getElementById('item-description');
+
+        const finalCondition = document.getElementById('final-condition');
+        const finalTime = document.getElementById('final-time');
+        const finalWishlistCount = document.getElementById('final-wishlist-count');
+        const finalParticipantId = document.getElementById('final-participant-id');
+
+        let currentCondition = ''; // 'warm' or 'cool'
+        let startTime = 0;
+        let endTime = 0;
+        let wishlistCount = 0;
+        let currentItemIndex = 0;
+        let participantId = '';
+
+        // Define your mock catalog items
+        const items = [
+            {
+                name: "Plain Ceramic Mug",
+                image: "https://placehold.co/300x200/cccccc/000000?text=Ceramic+Mug",
+                description: "A simple, durable ceramic mug, perfect for your daily coffee or tea. Microwave and dishwasher safe."
+            },
+            {
+                name: "Basic Ballpoint Pen",
+                image: "https://placehold.co/300x200/cccccc/000000?text=Ballpoint+Pen",
+                description: "A reliable and smooth-writing ballpoint pen. Ideal for everyday notes and quick sketches."
+            },
+            {
+                name: "Standard Notebook",
+                image: "https://placehold.co/300x200/cccccc/000000?text=Notebook",
+                description: "A classic lined notebook with a durable cover, suitable for journaling, school, or work."
+            },
+            {
+                name: "White T-Shirt",
+                image: "https://placehold.co/300x200/cccccc/000000?text=White+T-Shirt",
+                description: "A comfortable and versatile 100% cotton white t-shirt. A staple for any wardrobe."
+            },
+            {
+                name: "Simple Desk Lamp",
+                image: "https://placehold.co/300x200/cccccc/000000?text=Desk+Lamp",
+                description: "A compact and functional desk lamp, providing focused illumination for reading or tasks."
+            }
+        ];
+
+        // --- Functions ---
+
+        /**
+         * Generates a unique ID for the participant.
+         * @returns {string} A UUID.
+         */
+        function generateUUID() {
+            return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+                var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+                return v.toString(16);
+            });
+        }
+
+        /**
+         * Applies the chosen color theme to a specific element.
+         * @param {HTMLElement} elementToTheme - The element to apply the theme to.
+         */
+        function applyThemeToElement(elementToTheme) {
+            elementToTheme.classList.remove('warm-theme', 'cool-theme'); // Remove existing themes
+            elementToTheme.classList.add(`${currentCondition}-theme`); // Add the new theme
+        }
+
+
+        /**
+         * Displays a specific screen and hides others.
+         * @param {HTMLElement} screenToShow - The screen element to display.
+         */
+        function showScreen(screenToShow) {
+            [consentScreen, instructionsScreen, itemScreen, debriefingScreen].forEach(screen => {
+                screen.style.display = 'none';
+            });
+            screenToShow.style.display = 'flex'; // Use flex to maintain centering
+        }
+
+        /**
+         * Loads the current item's details onto the item screen.
+         */
+        function loadItem() {
+            const item = items[currentItemIndex];
+            itemName.textContent = item.name;
+            itemImage.src = item.image;
+            itemImage.alt = item.name;
+            itemDescription.textContent = item.description;
+
+            // Reset wishlist button state for new item
+            addToWishlistButton.disabled = false;
+            addToWishlistButton.textContent = 'Add to Wishlist';
+            addToWishlistButton.classList.remove('clicked');
+
+            // Update Next Item button text
+            if (currentItemIndex === items.length - 1) {
+                nextItemButton.textContent = 'Finish Task';
+            } else {
+                nextItemButton.textContent = 'Next Item';
+            }
+        }
+
+        /**
+         * Initializes the experiment flow.
+         */
+        function initializeExperiment() {
+            // Randomly assign condition
+            currentCondition = Math.random() < 0.5 ? 'warm' : 'cool';
+            participantId = generateUUID(); // Generate unique ID for this session
+            // No theme applied here initially. Consent and instructions screens remain neutral.
+
+            showScreen(consentScreen); // Start with the consent screen
+        }
+
+        // --- Event Listeners ---
+
+        agreeButton.addEventListener('click', () => {
+            showScreen(instructionsScreen);
+        });
+
+        startTaskButton.addEventListener('click', () => {
+            startTime = performance.now(); // Start timing the task
+            applyThemeToElement(itemScreen); // Apply theme only when the task starts
+            showScreen(itemScreen);
+            loadItem();
+        });
+
+        addToWishlistButton.addEventListener('click', () => {
+            wishlistCount++;
+            addToWishlistButton.textContent = 'Added!';
+            addToWishlistButton.disabled = true; // Disable after clicking once per item
+            addToWishlistButton.classList.add('clicked');
+        });
+
+        nextItemButton.addEventListener('click', () => {
+            currentItemIndex++;
+            if (currentItemIndex < items.length) {
+                loadItem();
+            } else {
+                // End of items, go to debriefing
+                endTime = performance.now(); // End timing
+                const totalTimeSeconds = ((endTime - startTime) / 1000).toFixed(2);
+
+                finalCondition.textContent = currentCondition.charAt(0).toUpperCase() + currentCondition.slice(1);
+                finalTime.textContent = totalTimeSeconds;
+                finalWishlistCount.textContent = wishlistCount;
+                finalParticipantId.textContent = participantId;
+
+                applyThemeToElement(debriefingScreen); // Apply theme to debriefing screen
+                showScreen(debriefingScreen);
+            }
+        });
+
+        // --- Initialize on page load ---
+        document.addEventListener('DOMContentLoaded', initializeExperiment);
+    </script>
+</body>
+</html>

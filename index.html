@@ -62,7 +62,7 @@
             background-color: #002853; /* blue-600 */
         }
         .cool-theme .text-secondary {
-            color: #002853; /* blue-700 */
+            color: #002853; /* blue-600 */
         }
 
         /* Ensure image responsiveness */
@@ -94,6 +94,33 @@
         .wishlist-btn.clicked {
             background-color: #10B981; /* green-500 */
         }
+
+        /* Styling for radio buttons and inputs */
+        .form-group {
+            margin-bottom: 1rem;
+            text-align: left;
+            width: 100%;
+            max-width: 400px; /* Constrain form width */
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+        .form-group input[type="text"], .form-group input[type="radio"] {
+            margin-right: 0.5rem;
+        }
+        .form-group input[type="text"] {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid #D1D5DB;
+            border-radius: 0.375rem;
+        }
+        .radio-option {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
     </style>
 </head>
 <body>
@@ -103,7 +130,7 @@
         <h1 class="text-3xl font-bold mb-4">Study Information and Consent Form</h1>
         <p class="mb-2 text-lg">**Study Title:** User Interaction with Online Interface Designs</p>
         <p class="mb-2 text-lg">**Researcher:** Melissa Tovar</p>
-        <p class="mb-6 text-lg">**University:** Arizona State University]</p>
+        <p class="mb-6 text-lg">**University:** Arizona State University</p>
 
         <h2 class="text-2xl font-semibold mb-3 text-secondary">Introduction:</h2>
         <p class="mb-4 text-base leading-relaxed">You are invited to participate in a research study investigating how individuals interact with different online interface designs. Your participation in this study is entirely voluntary.</p>
@@ -128,6 +155,16 @@
 
         <button id="agree-button" class="btn-primary px-8 py-3 text-xl font-semibold rounded-lg shadow-md hover:shadow-lg transition-all duration-200">I agree to participate</button>
     </div>
+
+    <!-- Demographics Screen -->
+    <div id="demographics-screen" class="card">
+        <h1 class="text-3xl font-bold mb-6">Demographic Information</h1>
+        <p class="mb-6 text-lg leading-relaxed">Please answer a few questions about yourself. Your responses are anonymous.</p>
+
+        <div class="form-group">
+            <label for="age">Age:</label>
+            <input type="text" id="age" name="age" class="w-full p-2 border border-gray-300 rounded-md" placeholder="e.g., 25">
+        </div>
 
         <div class="form-group">
             <label>Gender:</label>
@@ -179,6 +216,7 @@
 
         <button id="demographics-submit-button" class="btn-primary px-8 py-3 text-xl font-semibold rounded-lg shadow-md hover:shadow-lg transition-all duration-200 mt-6">Continue</button>
     </div>
+
     <!-- Instructions Screen -->
     <div id="instructions-screen" class="card">
         <h1 class="text-3xl font-bold mb-4">Instructions for Your Task</h1>
@@ -224,6 +262,9 @@
             <p><strong>Task Completion Time:</strong> <span id="final-time"></span> seconds</p>
             <p><strong>Items Added to Wishlist:</strong> <span id="final-wishlist-count"></span> / 5</p>
             <p><strong>Unique Participant ID:</strong> <span id="final-participant-id"></span></p>
+            <p><strong>Age:</strong> <span id="final-age"></span></p>
+            <p><strong>Gender:</strong> <span id="final-gender"></span></p>
+            <p><strong>Online Shopping Frequency:</strong> <span id="final-online-freq"></span></p>
         </div>
         <p class="mb-8 text-base leading-relaxed font-semibold">Please copy the "Your Data" section above and provide it to your researcher as instructed.</p>
 
@@ -233,11 +274,13 @@
     <script>
         // --- Global Variables ---
         const consentScreen = document.getElementById('consent-screen');
+        const demographicsScreen = document.getElementById('demographics-screen'); // New screen
         const instructionsScreen = document.getElementById('instructions-screen');
         const itemScreen = document.getElementById('item-screen');
         const debriefingScreen = document.getElementById('debriefing-screen');
 
         const agreeButton = document.getElementById('agree-button');
+        const demographicsSubmitButton = document.getElementById('demographics-submit-button'); // New button
         const startTaskButton = document.getElementById('start-task-button');
         const addToWishlistButton = document.getElementById('add-to-wishlist-button');
         const nextItemButton = document.getElementById('next-item-button');
@@ -250,6 +293,9 @@
         const finalTime = document.getElementById('final-time');
         const finalWishlistCount = document.getElementById('final-wishlist-count');
         const finalParticipantId = document.getElementById('final-participant-id');
+        const finalAge = document.getElementById('final-age'); // New span for age
+        const finalGender = document.getElementById('final-gender'); // New span for gender
+        const finalOnlineFreq = document.getElementById('final-online-freq'); // New span for freq
 
         let currentCondition = ''; // 'warm' or 'cool'
         let startTime = 0;
@@ -257,6 +303,12 @@
         let wishlistCount = 0;
         let currentItemIndex = 0;
         let participantId = '';
+
+        // Variables to store demographics data
+        let participantAge = '';
+        let participantGender = '';
+        let participantOnlineFreq = '';
+
 
         // Define your mock catalog items
         const items = [
@@ -315,7 +367,7 @@
          * @param {HTMLElement} screenToShow - The screen element to display.
          */
         function showScreen(screenToShow) {
-            [consentScreen, instructionsScreen, itemScreen, debriefingScreen].forEach(screen => {
+            [consentScreen, demographicsScreen, instructionsScreen, itemScreen, debriefingScreen].forEach(screen => {
                 screen.style.display = 'none';
             });
             screenToShow.style.display = 'flex'; // Use flex to maintain centering
@@ -351,7 +403,7 @@
             // Randomly assign condition
             currentCondition = Math.random() < 0.5 ? 'warm' : 'cool';
             participantId = generateUUID(); // Generate unique ID for this session
-            // No theme applied here initially. Consent and instructions screens remain neutral.
+            // No theme applied here initially. Consent, demographics, and instructions screens remain neutral.
 
             showScreen(consentScreen); // Start with the consent screen
         }
@@ -359,7 +411,16 @@
         // --- Event Listeners ---
 
         agreeButton.addEventListener('click', () => {
-            showScreen(instructionsScreen);
+            showScreen(demographicsScreen); // Go to demographics after consent
+        });
+
+        demographicsSubmitButton.addEventListener('click', () => {
+            // Collect demographics data
+            participantAge = document.getElementById('age').value;
+            participantGender = document.querySelector('input[name="gender"]:checked')?.value || 'Not provided';
+            participantOnlineFreq = document.querySelector('input[name="online-freq"]:checked')?.value || 'Not provided';
+
+            showScreen(instructionsScreen); // Go to instructions after demographics
         });
 
         startTaskButton.addEventListener('click', () => {
@@ -389,6 +450,9 @@
                 finalTime.textContent = totalTimeSeconds;
                 finalWishlistCount.textContent = wishlistCount;
                 finalParticipantId.textContent = participantId;
+                finalAge.textContent = participantAge;
+                finalGender.textContent = participantGender;
+                finalOnlineFreq.textContent = participantOnlineFreq;
 
                 applyThemeToElement(debriefingScreen); // Apply theme to debriefing screen
                 showScreen(debriefingScreen);

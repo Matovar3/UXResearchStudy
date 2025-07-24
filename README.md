@@ -1,0 +1,1 @@
+This study utilizes a between-subjects experimental design. Participants will be randomly assigned to one of two independent variable conditions: a Warm Color Scheme interface or a Cool Color Scheme interface. Random assignment will be handled automatically by the custom-built web application.
